@@ -12,7 +12,9 @@ const Dashboard = () => {
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="demo-logo-vertical" />
+        <div className="">
+          <img src="" alt="" />
+        </div>
         <Menu
           theme="dark"
           mode="inline"
