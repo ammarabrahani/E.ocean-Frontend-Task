@@ -1,46 +1,72 @@
-import { Table, Popover, Input } from "antd";
+import { Table, Popover, Input, Button, Tag } from "antd";
+import { useEffect, useState } from "react";
 import { AiFillEdit, AiFillDelete, AiOutlineMore } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { invoicesFetch } from "../Redux/invoiceSlice";
+import InvoiceModal from "./InvoiceModal";
+
+import moment from "moment";
 
 const { Search } = Input;
 
 const Invoice = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { geInvoices } = useSelector((state) => state);
+
+  let dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(invoicesFetch());
+    console.log(geInvoices?.items?.users);
+  }, [dispatch]);
+
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sydney No. 1 Lake Park",
-    },
-    {
-      key: "4",
-      name: "Jim Red",
-      age: 32,
-      address: "London No. 2 Lake Park",
-    },
-  ];
   const buttonWidth = 70;
   const columns = [
-    { title: "ID", dataIndex: "name" },
-    { title: "CUSTOMER NAME", dataIndex: "age" },
-    { title: "AMOUNT", dataIndex: "age" },
-    { title: "DATE", dataIndex: "age" },
-    { title: "STATUS", dataIndex: "age" },
+    {
+      title: "ID",
+      dataIndex: "_id",
+      render: (recordId) => {
+        return <b>{recordId}</b>;
+      },
+    },
+    {
+      title: "CUSTOMER NAME",
+      render: (record) => {
+        var fullName = `${record.firstName}`;
+        return <div>{fullName}</div>;
+      },
+    },
+    { title: "AMOUNT", dataIndex: "amount" },
+    {
+      title: "DATE",
+      render: (record) => {
+        return record?.courses?.map((item) => {
+          return moment(item?.createdAt).format("YYYY-MM-DD");
+        });
+      },
+    },
+    {
+      title: "STATUS",
+      render: (record) => {
+        return (
+          <>
+            {" "}
+            {!record.is_blocked ? (
+              <Tag className="tags" color={"green"}>
+                Paid
+              </Tag>
+            ) : (
+              <Tag className="tags" color={"red"}>
+                UnPaid
+              </Tag>
+            )}
+          </>
+        );
+      },
+    },
     {
       title: "ACTION",
       dataIndex: "age",
@@ -70,9 +96,31 @@ const Invoice = () => {
       },
     },
   ];
+
+  const closeAreaModal = (success = false) => {
+    setIsModalVisible(false);
+    // setEditArea(false);
+    // if (success) {
+    //   setReload((reload) => reload + 1);
+    // }
+  };
+
   const onSearch = (value) => console.log(value);
   return (
     <>
+      <div>
+        <Button
+          key="open-add-area-modal"
+          type="primary"
+          onClick={() => {
+            // setEditArea(false);
+            setIsModalVisible(true);
+          }}
+        >
+          + Add Area
+        </Button>
+        ,
+      </div>
       <Search
         placeholder="input search text"
         onSearch={onSearch}
@@ -80,7 +128,17 @@ const Invoice = () => {
           width: 200,
         }}
       />
-      <Table columns={columns} dataSource={data} onChange={onChange} />;
+
+      <InvoiceModal
+        isModalVisible={isModalVisible}
+        closeModal={closeAreaModal}
+      />
+      <Table
+        columns={columns}
+        dataSource={geInvoices?.items}
+        onChange={onChange}
+        rowKey={(record) => record._id}
+      />
     </>
   );
 };
