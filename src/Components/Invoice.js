@@ -184,7 +184,13 @@ const Invoice = () => {
         </Col>
       </Row>
 
-      <div>
+      <div className="top_invoice_header">
+        <Search
+          className="invoice_search"
+          placeholder="input search text"
+          onSearch={onSearch}
+          allowClear
+        />
         <Button
           key="open-add-area-modal"
           type="primary"
@@ -196,14 +202,6 @@ const Invoice = () => {
           + Add Area
         </Button>
       </div>
-      <Search
-        placeholder="input search text"
-        onSearch={onSearch}
-        allowClear
-        style={{
-          width: 200,
-        }}
-      />
 
       <InvoiceModal
         isModalVisible={isModalVisible}
