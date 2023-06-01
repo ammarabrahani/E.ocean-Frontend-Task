@@ -10,7 +10,11 @@ const Dashboard = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   return (
-    <Layout>
+    <Layout
+      style={{
+        height: "100%",
+      }}
+    >
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="">
           <img src="" alt="" />
@@ -55,7 +59,7 @@ const Dashboard = () => {
           style={{
             margin: "24px 16px",
             padding: 24,
-            minHeight: 280,
+            minHeight: "100vh",
             background: colorBgContainer,
           }}
         >

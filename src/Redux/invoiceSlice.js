@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+const invoiceItems = localStorage.getItem("invoiceItems");
 
 const initialState = {
-  items: [],
+  items: invoiceItems ? JSON.parse(invoiceItems) : [],
   status: false,
 };
 
@@ -10,39 +12,20 @@ export const invoicesFetch = createAsyncThunk(
   "invoice/invoicesFetch",
   async () => {
     try {
-      const paramsPagination = {
-        pageNumber: 1,
-        pagesize: 1,
-      };
-      const searchParams = new URLSearchParams({
-        pageNumber: paramsPagination.pageNumber,
-        pagesize: paramsPagination.pagesize,
-      });
-
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxM2IyNWQ1OWIxMmU5MWQxMmRiNjQ0YSIsImlhdCI6MTY4NTU2MjcwMiwiZXhwIjoxNjk0MjAyNzAyfQ.uj8HU-YuIAzMZY-DUNNBQIgQZCyV7JpyrfiUCyvnigM"; // Replace with your actual token
-      const headers = {
-        "content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      const getResponse = await axios.get(
-        `https://api.oshaonlinecenter.com/admin/users?${searchParams}`,
-        { headers }
-      );
-
-      //   console.log(updateRes, "updateRes");
-
-      const updateRes = getResponse.data.users.map((invoice) => {
+      const getResponse = await axios.get(`/invoiceDB.json`);
+      const updateRes = getResponse.data.invoiceList.map((invoice, index) => {
         return {
           ...invoice,
-          amount: 130,
+          uuid: uuidv4(),
+          number: index + 1,
         };
       });
 
-      localStorage.setItem("get_products", JSON.stringify(updateRes));
+      if (!JSON.parse(localStorage.getItem("invoiceItems"))) {
+        localStorage.setItem("invoiceItems", JSON.stringify(updateRes));
+      }
 
-      return updateRes ? updateRes : [];
+      return JSON.parse(localStorage.getItem("invoiceItems"));
     } catch (err) {
       throw err;
     }
@@ -55,6 +38,33 @@ const getInvoiceDetails = createSlice({
   reducers: {
     addInvoice: (state, action) => {
       state.items = [...state.items, action.payload];
+      localStorage.setItem(
+        "invoiceItems",
+        JSON.stringify([...state.items, action.payload])
+      );
+    },
+    updateInvoice: (state, action) => {
+      const { invoiceIndex } = action.payload;
+      state.items[invoiceIndex] = action.payload;
+      localStorage.setItem("invoiceItems", JSON.stringify(state.items));
+    },
+    searchInvoice: (state, action) => {
+      const { payload: searchItem } = action;
+      state.status = true;
+      if (searchItem !== "") {
+        const filtered = state.items.filter((item) => {
+          return item.customer_name
+            .toLowerCase()
+            .includes(searchItem.toLowerCase());
+        });
+        if (filtered.length > 0) {
+          state.items = [...filtered];
+        }
+      } else if (searchItem === "" || !searchItem) {
+        state.status = false;
+        state.items = [...initialState.items];
+      }
+      state.status = false;
     },
   },
   extraReducers: (builder) => {
@@ -72,6 +82,7 @@ const getInvoiceDetails = createSlice({
   },
 });
 
-export const { addInvoice } = getInvoiceDetails.actions;
+export const { addInvoice, updateInvoice, searchInvoice } =
+  getInvoiceDetails.actions;
 
 export default getInvoiceDetails.reducer;

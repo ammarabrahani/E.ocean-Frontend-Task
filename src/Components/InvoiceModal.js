@@ -1,47 +1,119 @@
-import { Modal, Button, Form, Select, Input, Radio, DatePicker } from "antd";
-import { useState } from "react";
+import { Modal, Button, Form, Select, Input, Radio, message } from "antd";
+import { useState, useEffect } from "react";
 import moment from "moment/moment";
 import { useDispatch } from "react-redux";
-import { addInvoice } from "../Redux/invoiceSlice";
+import { addInvoice, updateInvoice } from "../Redux/invoiceSlice";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const InvoiceModal = ({ isModalVisible, closeModal }) => {
+import { parse } from "date-fns";
+
+const InvoiceModal = ({
+  isModalVisible,
+  closeModal,
+  editInvoice,
+  invoiceIndex,
+}) => {
   const { Option } = Select;
-  const [title, setTitle] = useState("Add Area");
+  const [title, setTitle] = useState("Add Invoice");
 
   const dispatch = useDispatch();
 
+  const range = (start, end) => {
+    return new Array(end - start).fill().map((d, i) => i + start);
+  };
+
+  const years = range(1990, 2025);
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   const [areaForm] = Form.useForm();
+
+  const [invoiceDate, setInvoiceDate] = useState(null);
+
+  const selectDateHandler = (d) => {
+    setInvoiceDate(d);
+  };
+
+  useEffect(() => {
+    if (editInvoice) {
+      setTitle("Edit Invoice: " + editInvoice?.customer_name);
+
+      if (editInvoice.date_invoice) {
+        setInvoiceDate(
+          parse(editInvoice.date_invoice, "yyyy-MM-dd", new Date())
+        );
+      }
+
+      areaForm.setFieldsValue({
+        customer_name: editInvoice.customer_name,
+        amount: editInvoice.amount,
+        status: editInvoice.status,
+      });
+    } else {
+      setTitle("Add Invoice");
+      setInvoiceDate();
+      areaForm.resetFields();
+      // TODO: Reset All Fields
+    }
+  }, [areaForm, editInvoice]);
+
   const handleSavePrincipal = () => {
     areaForm
       .validateFields()
       .then((values) => {
         // Access the form values
-        // setLoading(true);
-        if (values.createdAt) {
-          values.createdAt = moment(values.date).format("YYYY-MM-DD");
+
+        const date_invoice = moment(invoiceDate).format("YYYY-MM-DD");
+
+        if (!invoiceDate) {
+          return message.error("Please Select A Date");
         }
 
-        dispatch(addInvoice(values));
-        // const formData = new window.FormData();
+        if (values.date_invoice) {
+          values.date_invoice = moment(values.date_invoice).format(
+            "YYYY-MM-DD"
+          );
+        }
 
-        // const getOBJ = Object.keys(values).map((key) => {
-        //   console.log(key, "key");
+        if (editInvoice) {
+          dispatch(
+            updateInvoice({
+              ...values,
+              date_invoice,
+              invoiceIndex,
+            })
+          );
+          message.success("Invoice Updated Successfully");
+        } else {
+          dispatch(
+            addInvoice({
+              ...values,
+              date_invoice,
+            })
+          );
+          message.success("Invoice Added Successfully");
+        }
 
-        //   if (key === "date") {
-        //     const date = moment(values[key]).format("YYYY-MM-DD");
-        //     return {
-        //       date: date,
-        //     };
-        //   } else {
-        //     return values[key];
-        //   }
-        // });
-
-        // console.log(getOBJ, "getOBJgetOBJ");
+        closeModal(true);
+        areaForm.resetFields();
       })
       .catch((error) => {
         // Handle validation errors or any other errors
         console.error(error);
+        // message.success(error);
       });
   };
 
@@ -69,7 +141,7 @@ const InvoiceModal = ({ isModalVisible, closeModal }) => {
             // loading={loading}
             onClick={() => handleSavePrincipal()}
           >
-            Add Area
+            {editInvoice ? "Update" : "Add Invoice"}
           </Button>,
         ]}
       >
@@ -84,20 +156,60 @@ const InvoiceModal = ({ isModalVisible, closeModal }) => {
         >
           <Form.Item
             label="Name"
-            name="firstName"
+            name="customer_name"
             rules={[{ required: true, message: "Please input customer name!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Amount"
-            name="amont"
+            name="amount"
             rules={[{ required: true, message: "Please input amount!" }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Date" name="createdAt">
-            <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
+          <Form.Item label="Date" initialValues={moment("2222-03-1")}>
+            <DatePicker
+              dateFormat="yyyy-MM-dd"
+              selected={invoiceDate}
+              onChange={selectDateHandler}
+              withPortal
+              showIcon
+              placeholderText="Select Date"
+              // todayButton={"Today"}
+
+              renderCustomHeader={({ changeYear, changeMonth }) => (
+                <div
+                  style={{
+                    margin: 10,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <select
+                    onChange={({ target: { value } }) => changeYear(value)}
+                  >
+                    {years.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    onChange={({ target: { value } }) =>
+                      changeMonth(months.indexOf(value))
+                    }
+                  >
+                    {months.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            />
           </Form.Item>
 
           <Form.Item
@@ -106,7 +218,7 @@ const InvoiceModal = ({ isModalVisible, closeModal }) => {
             rules={[{ required: true, message: "Please input amount!" }]}
           >
             <Radio.Group name="radiogroup">
-              <Radio value={false}>
+              <Radio value={"Completed"}>
                 <b
                   style={{
                     paddingLeft: "5px",
@@ -115,7 +227,7 @@ const InvoiceModal = ({ isModalVisible, closeModal }) => {
                   Paid
                 </b>
               </Radio>
-              <Radio value={true}>
+              <Radio value={"Pending"}>
                 <b
                   style={{
                     paddingLeft: "5px",

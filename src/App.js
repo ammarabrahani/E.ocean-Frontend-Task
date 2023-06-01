@@ -1,4 +1,5 @@
 import "./App.css";
+import "./assets/scss/main.scss";
 
 import AppRoutes from "./routes";
 
