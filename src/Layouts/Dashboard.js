@@ -12,10 +12,19 @@ const Dashboard = () => {
   return (
     <Layout
       style={{
-        height: "100%",
+        minHeight: "100vh",
       }}
     >
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider
+        breakpoint="lg"
+        collapsedWidth="0"
+        onBreakpoint={(broken) => {
+          console.log(broken);
+        }}
+        onCollapse={(collapsed, type) => {
+          console.log(collapsed, type);
+        }}
+      >
         <div className="">
           <img src="" alt="" />
         </div>
