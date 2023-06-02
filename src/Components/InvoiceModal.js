@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { addInvoice, updateInvoice } from "../Redux/invoiceSlice";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { v4 as uuidv4 } from "uuid";
 
 import { parse } from "date-fns";
 
@@ -14,7 +15,7 @@ const InvoiceModal = ({
   editInvoice,
   invoiceIndex,
 }) => {
-  const { Option } = Select;
+  // const { Option } = Select;
   const [title, setTitle] = useState("Add Invoice");
 
   const dispatch = useDispatch();
@@ -94,6 +95,7 @@ const InvoiceModal = ({
               ...values,
               date_invoice,
               invoiceIndex,
+              uuid: uuidv4(),
             })
           );
           message.success("Invoice Updated Successfully");
@@ -102,6 +104,7 @@ const InvoiceModal = ({
             addInvoice({
               ...values,
               date_invoice,
+              uuid: uuidv4(),
             })
           );
           message.success("Invoice Added Successfully");

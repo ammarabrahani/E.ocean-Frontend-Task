@@ -22,13 +22,14 @@ import InvoiceModal from "./InvoiceModal";
 import { DailyChart, WeeklyChart } from "./InvoiceCharts";
 
 import moment from "moment";
-const { Meta } = Card;
 
 const { Search } = Input;
 
 const Invoice = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editInvoice, setEditInvoice] = useState(false);
+  const [tableLoading, setTableLoading] = useState(true);
+
   const [loading, setLoading] = useState(true);
 
   const [invoiceIndex, setinvoiceIndex] = useState(false);
@@ -43,11 +44,16 @@ const Invoice = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
+      setTableLoading(false);
     }, 1000);
   }, []);
 
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
+  const onChange = () => {
+    setTableLoading(true);
+
+    setTimeout(() => {
+      setTableLoading(false);
+    }, 1000);
   };
 
   const handleInvoiceEdit = (invoice) => {
@@ -69,27 +75,44 @@ const Invoice = () => {
 
   const buttonWidth = 70;
   const columns = [
+    // {
+    //   title: "ID",
+    //   render: (record, i) => {
+    //     return <b>{record?.number}</b>;
+    //   },
+    // },
     {
-      title: "ID",
-      render: (record, i) => {
-        return <b>{record?.number}</b>;
-      },
-    },
-    {
-      title: "CUSTOMER NAME",
+      title: "Customer",
       render: (record) => {
-        return <div>{record.customer_name}</div>;
+        return (
+          <div>
+            {<b>{record.customer_name}</b>}
+            <span
+              style={{
+                display: "block",
+                fontSize: "12px",
+                color: "darkgray",
+              }}
+            >
+              <b>Customer_Id:</b> {record?.uuid || ""}
+            </span>
+          </div>
+        );
       },
     },
-    { title: "AMOUNT", dataIndex: "amount" },
     {
-      title: "DATE",
+      title: "Amount",
+      dataIndex: "amount",
+      sorter: (a, b) => a.amount - b.amount,
+    },
+    {
+      title: "Due Date",
       render: (record) => {
         return moment(record?.date_invoice).format("YYYY-DD-MM");
       },
     },
     {
-      title: "STATUS",
+      title: "Status",
       render: (record) => {
         return (
           <>
@@ -110,7 +133,7 @@ const Invoice = () => {
       },
     },
     {
-      title: "ACTION",
+      title: "Action",
       filters: [
         {
           text: "PAID",
@@ -164,15 +187,23 @@ const Invoice = () => {
 
   const closeAreaModal = (success = false) => {
     setIsModalVisible(false);
-    // setEditArea(false);
-    // if (success) {
-    //   setReload((reload) => reload + 1);
-    // }
   };
 
-  const onSearch = (value) => {
-    dispatch(searchInvoice(value));
+  // you can do the search on sumbit
+
+  // const onSearch = (value) => {
+  //   dispatch(searchInvoice(value));
+  // };
+
+  const handleSearch = (val) => {
+    setTableLoading(true);
+    dispatch(searchInvoice(val));
+
+    setTimeout(() => {
+      setTableLoading(false);
+    }, 1000);
   };
+
   return (
     <>
       <Row gutter={30}>
@@ -229,8 +260,9 @@ const Invoice = () => {
       <div className="top_invoice_header">
         <Search
           className="invoice_search"
-          placeholder="input search text"
-          onSearch={onSearch}
+          placeholder="Search By Customer Name"
+          // onSearch={onSearch}
+          onChange={(event) => handleSearch(event.target.value)}
           allowClear
         />
         <Button
@@ -244,22 +276,21 @@ const Invoice = () => {
           + Add Area
         </Button>
       </div>
-
+      <div>
+        <h3>INOVOICE</h3>
+      </div>
       <InvoiceModal
         isModalVisible={isModalVisible}
         closeModal={closeAreaModal}
         editInvoice={editInvoice}
         invoiceIndex={invoiceIndex}
       />
-      {/* {loading ? <Spin /> : (
-        
-      )} */}
       <Table
         className="invoice_table"
         columns={columns}
         dataSource={geInvoices?.items}
         onChange={onChange}
-        loading={loading}
+        loading={tableLoading}
         rowKey={(record) => record.uuid}
       />
     </>

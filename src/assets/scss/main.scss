@@ -1,7 +1,9 @@
-// Table
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
+
+$secondary-color: #413ea0;
 
 body {
-    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
 }
 
 // Loader
@@ -12,26 +14,20 @@ body {
     align-items: center;
     height: 100%;
 }
-// .ant-btn {
-//     background: #413ea0;
-//     color: white;
-//     &:hover {
-//         background: #413ea0;
 
-//         color: white;
-//     }
-// }
+// Table
+
 .invoice_table {
     .ant-table-thead {
         .ant-table-cell {
-            color: #413ea0;
+            color: $secondary-color;
             text-transform: capitalize;
         }
     }
     .pop_hover {
         cursor: pointer;
         svg {
-            fill: #413ea0;
+            fill: $secondary-color;
             font-size: 18px;
         }
     }
@@ -96,6 +92,8 @@ body {
         border-radius: 8px;
         padding: 12px;
         height: 285px;
+        font-family: "Poppins", sans-serif;
+
         .card_details {
             display: flex;
             justify-content: space-between;
@@ -115,7 +113,7 @@ body {
                 }
                 b {
                     font-size: 24px;
-                    color: #413ea0;
+                    color: $secondary-color;
                 }
             }
         }

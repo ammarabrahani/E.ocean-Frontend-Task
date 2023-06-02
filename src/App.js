@@ -14,14 +14,9 @@ import Dashboard from "./Layouts/Dashboard";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
-      // if (window.location.pathname === "/") {
-      //   navigate("/home");
-      // } else {
-      // }
       setLoading(false);
     }, 1000);
   }, []);
@@ -42,6 +37,7 @@ function App() {
           theme={{
             token: {
               colorPrimary: "#413ea0",
+              fontFamily: "Poppins, sans-serif",
             },
           }}
         >
