@@ -18,7 +18,6 @@ export const invoicesFetch = createAsyncThunk(
         return {
           ...invoice,
           uuid: uuidv4(),
-          number: index + 1,
         };
       });
 

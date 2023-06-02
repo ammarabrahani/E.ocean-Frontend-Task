@@ -1,5 +1,5 @@
-import { Modal, Button, Form, Select, Input, Radio, message } from "antd";
-import { useState, useEffect } from "react";
+import { Modal, Button, Form, Input, Radio, message } from "antd";
+import { useState, useEffect, useRef } from "react";
 import moment from "moment/moment";
 import { useDispatch } from "react-redux";
 import { addInvoice, updateInvoice } from "../Redux/invoiceSlice";
@@ -17,6 +17,8 @@ const InvoiceModal = ({
 }) => {
   // const { Option } = Select;
   const [title, setTitle] = useState("Add Invoice");
+
+  const areaForm = useRef(null);
 
   const dispatch = useDispatch();
 
@@ -40,9 +42,9 @@ const InvoiceModal = ({
     "December",
   ];
 
-  const [areaForm] = Form.useForm();
+  // const [areaForm] = Form.useForm();
 
-  const [invoiceDate, setInvoiceDate] = useState(null);
+  const [invoiceDate, setInvoiceDate] = useState(false);
 
   const selectDateHandler = (d) => {
     setInvoiceDate(d);
@@ -58,7 +60,7 @@ const InvoiceModal = ({
         );
       }
 
-      areaForm.setFieldsValue({
+      areaForm?.current?.setFieldsValue({
         customer_name: editInvoice.customer_name,
         amount: editInvoice.amount,
         status: editInvoice.status,
@@ -66,13 +68,13 @@ const InvoiceModal = ({
     } else {
       setTitle("Add Invoice");
       setInvoiceDate();
-      areaForm.resetFields();
+      areaForm?.current?.resetFields();
       // TODO: Reset All Fields
     }
   }, [areaForm, editInvoice]);
 
   const handleSavePrincipal = () => {
-    areaForm
+    areaForm?.current
       .validateFields()
       .then((values) => {
         // Access the form values
@@ -111,7 +113,7 @@ const InvoiceModal = ({
         }
 
         closeModal(true);
-        areaForm.resetFields();
+        areaForm?.current?.resetFields();
       })
       .catch((error) => {
         // Handle validation errors or any other errors
@@ -150,7 +152,7 @@ const InvoiceModal = ({
       >
         <Form
           className="global__frm"
-          form={areaForm}
+          ref={areaForm}
           layout="vertical"
           name="invoice_modal_form"
           initialValues={{
@@ -171,7 +173,7 @@ const InvoiceModal = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Date" initialValues={moment("2222-03-1")}>
+          <Form.Item label="Date">
             <DatePicker
               dateFormat="yyyy-MM-dd"
               selected={invoiceDate}
@@ -192,8 +194,8 @@ const InvoiceModal = ({
                   <select
                     onChange={({ target: { value } }) => changeYear(value)}
                   >
-                    {years.map((option) => (
-                      <option key={option} value={option}>
+                    {years.map((option, i) => (
+                      <option key={i} value={option}>
                         {option}
                       </option>
                     ))}
@@ -204,8 +206,8 @@ const InvoiceModal = ({
                       changeMonth(months.indexOf(value))
                     }
                   >
-                    {months.map((option) => (
-                      <option key={option} value={option}>
+                    {months.map((option, i) => (
+                      <option key={i} value={option}>
                         {option}
                       </option>
                     ))}

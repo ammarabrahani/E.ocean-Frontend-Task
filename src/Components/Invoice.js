@@ -160,15 +160,10 @@ const Invoice = () => {
                     <AiFillEdit />
                   </a>
                   <a>
-                    <Popconfirm
-                      title="Are you sure to delete this area?"
-                      placement="topRight"
-                      onConfirm={() => handleInvoiceDelete(record, i)}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <AiFillDelete title={"Delete"} />
-                    </Popconfirm>
+                    <AiFillDelete
+                      title={"Delete"}
+                      onClick={() => handleInvoiceDelete(record, i)}
+                    />
                   </a>
                 </div>
               }
@@ -266,14 +261,14 @@ const Invoice = () => {
           allowClear
         />
         <Button
-          key="open-add-area-modal"
+          key="open-add-invoice-modal"
           type="primary"
           onClick={() => {
             setEditInvoice(false);
             setIsModalVisible(true);
           }}
         >
-          + Add Area
+          + Add Invoice
         </Button>
       </div>
       <div>
