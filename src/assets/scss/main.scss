@@ -1,5 +1,26 @@
 // Table
 
+body {
+    box-sizing: border-box;
+}
+
+// Loader
+
+.global_invoice_loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+// .ant-btn {
+//     background: #413ea0;
+//     color: white;
+//     &:hover {
+//         background: #413ea0;
+
+//         color: white;
+//     }
+// }
 .invoice_table {
     .ant-table-thead {
         .ant-table-cell {
@@ -74,6 +95,7 @@
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
         border-radius: 8px;
         padding: 12px;
+        height: 285px;
         .card_details {
             display: flex;
             justify-content: space-between;

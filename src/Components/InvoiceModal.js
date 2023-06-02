@@ -224,7 +224,7 @@ const InvoiceModal = ({
                     paddingLeft: "5px",
                   }}
                 >
-                  Paid
+                  PAID
                 </b>
               </Radio>
               <Radio value={"Pending"}>
@@ -233,7 +233,7 @@ const InvoiceModal = ({
                     paddingLeft: "5px",
                   }}
                 >
-                  UnPaid
+                  UNPAID
                 </b>
               </Radio>
             </Radio.Group>

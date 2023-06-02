@@ -36,7 +36,7 @@ const Dashboard = () => {
             {
               key: "dashboard",
               //   icon: <UserOutlined />,
-              label: <NavLink to={"/"}>Dashboard</NavLink>,
+              label: <NavLink to={"/home"}>Dashboard</NavLink>,
             },
             {
               key: "invoice",

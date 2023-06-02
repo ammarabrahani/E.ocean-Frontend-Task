@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { message } from "antd";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 const invoiceItems = localStorage.getItem("invoiceItems");
@@ -48,6 +49,18 @@ const getInvoiceDetails = createSlice({
       state.items[invoiceIndex] = action.payload;
       localStorage.setItem("invoiceItems", JSON.stringify(state.items));
     },
+    deleteInvoice: (state, action) => {
+      const { payload: invoiceIndex } = action;
+
+      if (invoiceIndex >= 0) {
+        const filterInvoice = state.items.filter(
+          (item, i) => i !== invoiceIndex
+        );
+        state.items = [...filterInvoice];
+        localStorage.setItem("invoiceItems", JSON.stringify(state.items));
+        message.success("Invoice Deleted Successfully");
+      }
+    },
     searchInvoice: (state, action) => {
       const { payload: searchItem } = action;
       state.status = true;
@@ -82,7 +95,7 @@ const getInvoiceDetails = createSlice({
   },
 });
 
-export const { addInvoice, updateInvoice, searchInvoice } =
+export const { addInvoice, updateInvoice, deleteInvoice, searchInvoice } =
   getInvoiceDetails.actions;
 
 export default getInvoiceDetails.reducer;

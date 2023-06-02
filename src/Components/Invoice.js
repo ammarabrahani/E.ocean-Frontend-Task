@@ -8,11 +8,16 @@ import {
   Row,
   Col,
   Card,
+  Spin,
 } from "antd";
 import { useEffect, useState } from "react";
 import { AiFillEdit, AiFillDelete, AiOutlineMore } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { invoicesFetch, searchInvoice } from "../Redux/invoiceSlice";
+import {
+  deleteInvoice,
+  invoicesFetch,
+  searchInvoice,
+} from "../Redux/invoiceSlice";
 import InvoiceModal from "./InvoiceModal";
 import { DailyChart, WeeklyChart } from "./InvoiceCharts";
 
@@ -24,6 +29,7 @@ const { Search } = Input;
 const Invoice = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editInvoice, setEditInvoice] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [invoiceIndex, setinvoiceIndex] = useState(false);
 
@@ -33,6 +39,12 @@ const Invoice = () => {
   useEffect(() => {
     dispatch(invoicesFetch());
   }, [dispatch]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -46,6 +58,13 @@ const Invoice = () => {
     setinvoiceIndex(findIndex);
     setEditInvoice(invoice);
     setIsModalVisible(true);
+  };
+
+  const handleInvoiceDelete = (invoice) => {
+    const findIndex = geInvoices.items.findIndex(
+      (item) => item.uuid === invoice.uuid
+    );
+    dispatch(deleteInvoice(findIndex));
   };
 
   const buttonWidth = 70;
@@ -77,11 +96,11 @@ const Invoice = () => {
             {" "}
             {record.status === "Completed" ? (
               <Tag className="tags green" color={"green"}>
-                Paid
+                PAID
               </Tag>
             ) : record.status === "Pending" ? (
               <Tag className="tags red" color={"red"}>
-                UnPaid
+                UNPAID
               </Tag>
             ) : (
               ""
@@ -92,6 +111,17 @@ const Invoice = () => {
     },
     {
       title: "ACTION",
+      filters: [
+        {
+          text: "PAID",
+          value: "Completed",
+        },
+        {
+          text: "UNPAID",
+          value: "Pending",
+        },
+      ],
+      onFilter: (value, record) => record.status.startsWith(value),
       render(record, i) {
         return (
           <>
@@ -110,7 +140,7 @@ const Invoice = () => {
                     <Popconfirm
                       title="Are you sure to delete this area?"
                       placement="topRight"
-                      // onConfirm={() => handleInvoiceDelete(areas.id)}
+                      onConfirm={() => handleInvoiceDelete(record, i)}
                       okText="Yes"
                       cancelText="No"
                     >
@@ -149,36 +179,48 @@ const Invoice = () => {
         <Col xs={24} sm={24} md={24} lg={12} xl={12}>
           <div className="daily_sales">
             <div className="card_invoice">
-              <div className="card_details">
-                <div className="card_titles">
-                  <h2 className="card_head">Daily Sales</h2>
-                  <span>Order Received</span>
-                  <b>10</b>
-                </div>
-                <div className="card_titles">
-                  <h2 className="card_head">Payments Received</h2>
-                  <b>$6000</b>
-                </div>
-              </div>
-              <DailyChart />
+              {loading ? (
+                <Spin className="global_invoice_loader" />
+              ) : (
+                <>
+                  <div className="card_details">
+                    <div className="card_titles">
+                      <h2 className="card_head">Daily Sales</h2>
+                      <span>Order Received</span>
+                      <b>10</b>
+                    </div>
+                    <div className="card_titles">
+                      <h2 className="card_head">Payments Received</h2>
+                      <b>$6000</b>
+                    </div>
+                  </div>
+                  <DailyChart />
+                </>
+              )}
             </div>
           </div>
         </Col>
         <Col xs={24} sm={24} md={24} lg={12} xl={12}>
           <div className="daily_sales">
             <div className="card_invoice">
-              <div className="card_details">
-                <div className="card_titles">
-                  <h2 className="card_head">THIS WEEK</h2>
-                  <span>Order Received</span>
-                  <b>60</b>
-                </div>
-                <div className="card_titles">
-                  <h2 className="card_head">Payments Received</h2>
-                  <b>$90000</b>
-                </div>
-              </div>
-              <WeeklyChart />
+              {loading ? (
+                <Spin className="global_invoice_loader" />
+              ) : (
+                <>
+                  <div className="card_details">
+                    <div className="card_titles">
+                      <h2 className="card_head">THIS WEEK</h2>
+                      <span>Order Received</span>
+                      <b>60</b>
+                    </div>
+                    <div className="card_titles">
+                      <h2 className="card_head">Payments Received</h2>
+                      <b>$90000</b>
+                    </div>
+                  </div>
+                  <WeeklyChart />
+                </>
+              )}
             </div>
           </div>
         </Col>
@@ -209,12 +251,15 @@ const Invoice = () => {
         editInvoice={editInvoice}
         invoiceIndex={invoiceIndex}
       />
+      {/* {loading ? <Spin /> : (
+        
+      )} */}
       <Table
         className="invoice_table"
         columns={columns}
         dataSource={geInvoices?.items}
         onChange={onChange}
-        loading={geInvoices?.status}
+        loading={loading}
         rowKey={(record) => record.uuid}
       />
     </>
