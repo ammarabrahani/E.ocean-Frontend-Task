@@ -98,6 +98,17 @@ const Invoice = () => {
     },
     {
       title: "Status",
+      filters: [
+        {
+          text: "PAID",
+          value: true,
+        },
+        {
+          text: "UNPAID",
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => record.status === value,
       render: (record) => {
         return (
           <>
@@ -119,17 +130,6 @@ const Invoice = () => {
     },
     {
       title: "Action",
-      filters: [
-        {
-          text: "PAID",
-          value: true,
-        },
-        {
-          text: "UNPAID",
-          value: false,
-        },
-      ],
-      onFilter: (value, record) => record.status === value,
       render(record, i) {
         return (
           <>
