@@ -7,15 +7,16 @@
 => Install NodeJS. I am using the Node version which is v16.14.2.
 
 # Step: 3
-=> You need to install yarn through below command.
+=> You need to install yarn through command.
 npm install yarn
 
 # Step 4
-=> Run the below command to install the packages.
+=> Run the command to install the packages.
 yarn install 
 
 # Final Step
-=> To start the project run command  yarn start.
+=> To start the project run command. 
+yarn start.
 
 
  
