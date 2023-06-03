@@ -51,38 +51,38 @@ const dailySales = [
 
 const data = [
   {
-    name: "Page A",
-    uv: 590,
+    name: "Day 1",
+    dayily_sales: 590,
     pv: 800,
     amt: 1400,
   },
   {
-    name: "Page B",
-    uv: 868,
+    name: "Day 2",
+    dayily_sales: 868,
     pv: 967,
     amt: 1506,
   },
   {
-    name: "Page C",
-    uv: 1397,
+    name: "Day 3",
+    dayily_sales: 1397,
     pv: 1098,
     amt: 989,
   },
   {
-    name: "Page D",
-    uv: 1480,
+    name: "Day 4",
+    dayily_sales: 1480,
     pv: 1200,
     amt: 1228,
   },
   {
-    name: "Page E",
-    uv: 1520,
+    name: "Day 5",
+    dayily_sales: 1520,
     pv: 1108,
     amt: 1100,
   },
   {
-    name: "Page F",
-    uv: 1400,
+    name: "Day 6",
+    dayily_sales: 1400,
     pv: 680,
     amt: 1700,
   },
@@ -148,8 +148,8 @@ export const WeeklyChart = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="uv" barSize={20} fill="#413ea0" />
-            <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+            <Bar dataKey="dayily_sales" barSize={20} fill="#413ea0" />
+            <Line type="monotone" stroke="#ff7300" />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

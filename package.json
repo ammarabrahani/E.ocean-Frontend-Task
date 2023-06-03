@@ -53,5 +53,8 @@
   },
   "overrides": {
     "dayjs": "^1.11.7"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.10"
   }
 }

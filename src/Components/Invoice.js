@@ -1,17 +1,6 @@
-import {
-  Table,
-  Popover,
-  Input,
-  Button,
-  Tag,
-  Popconfirm,
-  Row,
-  Col,
-  Card,
-  Spin,
-} from "antd";
 import { useEffect, useState } from "react";
-import { AiFillEdit, AiFillDelete, AiOutlineMore } from "react-icons/ai";
+import { Table, Popover, Input, Button, Tag, Row, Col, Spin } from "antd";
+import { AiOutlineEdit, AiOutlineDelete, AiOutlineMore } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteInvoice,
@@ -67,26 +56,19 @@ const Invoice = () => {
   };
 
   const handleInvoiceDelete = (invoice) => {
-    const findIndex = geInvoices.items.findIndex(
+    const findIndex = geInvoices.items.find(
       (item) => item.uuid === invoice.uuid
     );
     dispatch(deleteInvoice(findIndex));
   };
 
-  const buttonWidth = 70;
   const columns = [
-    // {
-    //   title: "ID",
-    //   render: (record, i) => {
-    //     return <b>{record?.number}</b>;
-    //   },
-    // },
     {
       title: "Customer",
       render: (record) => {
         return (
           <div>
-            {<b>{record.customer_name}</b>}
+            {<b>{record?.customer_name}</b>}
             <span
               style={{
                 display: "block",
@@ -104,6 +86,9 @@ const Invoice = () => {
       title: "Amount",
       dataIndex: "amount",
       sorter: (a, b) => a.amount - b.amount,
+      render: (amount) => {
+        return `$${amount}`;
+      },
     },
     {
       title: "Due Date",
@@ -117,11 +102,11 @@ const Invoice = () => {
         return (
           <>
             {" "}
-            {record.status === "Completed" ? (
+            {record.status ? (
               <Tag className="tags green" color={"green"}>
                 PAID
               </Tag>
-            ) : record.status === "Pending" ? (
+            ) : !record.status ? (
               <Tag className="tags red" color={"red"}>
                 UNPAID
               </Tag>
@@ -137,14 +122,14 @@ const Invoice = () => {
       filters: [
         {
           text: "PAID",
-          value: "Completed",
+          value: true,
         },
         {
           text: "UNPAID",
-          value: "Pending",
+          value: false,
         },
       ],
-      onFilter: (value, record) => record.status.startsWith(value),
+      onFilter: (value, record) => record.status === value,
       render(record, i) {
         return (
           <>
@@ -152,19 +137,20 @@ const Invoice = () => {
               className="pop_hover"
               content={
                 <div>
-                  <a
+                  <span
+                    className="action_icons"
                     onClick={() => {
                       handleInvoiceEdit(record, i);
                     }}
                   >
-                    <AiFillEdit />
-                  </a>
-                  <a>
-                    <AiFillDelete
+                    <AiOutlineEdit className="edit_icon" />
+                  </span>
+                  <span className="action_icons">
+                    <AiOutlineDelete
                       title={"Delete"}
                       onClick={() => handleInvoiceDelete(record, i)}
                     />
-                  </a>
+                  </span>
                 </div>
               }
               title=""
@@ -241,7 +227,7 @@ const Invoice = () => {
                     </div>
                     <div className="card_titles">
                       <h2 className="card_head">Payments Received</h2>
-                      <b>$90000</b>
+                      <b>$12000</b>
                     </div>
                   </div>
                   <WeeklyChart />
@@ -260,16 +246,18 @@ const Invoice = () => {
           onChange={(event) => handleSearch(event.target.value)}
           allowClear
         />
-        <Button
-          key="open-add-invoice-modal"
-          type="primary"
-          onClick={() => {
-            setEditInvoice(false);
-            setIsModalVisible(true);
-          }}
-        >
-          + Add Invoice
-        </Button>
+        <div className="add__btn">
+          <Button
+            key="open-add-invoice-modal"
+            type="primary"
+            onClick={() => {
+              setEditInvoice(false);
+              setIsModalVisible(true);
+            }}
+          >
+            + Add Invoice
+          </Button>
+        </div>
       </div>
       <div>
         <h3>INOVOICE</h3>
@@ -287,6 +275,7 @@ const Invoice = () => {
         onChange={onChange}
         loading={tableLoading}
         rowKey={(record) => record.uuid}
+        scroll={{ x: "max-content" }}
       />
     </>
   );

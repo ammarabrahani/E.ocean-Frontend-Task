@@ -42,12 +42,10 @@ const InvoiceModal = ({
     "December",
   ];
 
-  // const [areaForm] = Form.useForm();
-
   const [invoiceDate, setInvoiceDate] = useState(false);
 
-  const selectDateHandler = (d) => {
-    setInvoiceDate(d);
+  const selectDateHandler = (selectDate) => {
+    setInvoiceDate(selectDate);
   };
 
   useEffect(() => {
@@ -220,10 +218,10 @@ const InvoiceModal = ({
           <Form.Item
             label="Status"
             name="status"
-            rules={[{ required: true, message: "Please input amount!" }]}
+            rules={[{ required: true, message: "Please select status!" }]}
           >
             <Radio.Group name="radiogroup">
-              <Radio value={"Completed"}>
+              <Radio value={true}>
                 <b
                   style={{
                     paddingLeft: "5px",
@@ -232,7 +230,7 @@ const InvoiceModal = ({
                   PAID
                 </b>
               </Radio>
-              <Radio value={"Pending"}>
+              <Radio value={false}>
                 <b
                   style={{
                     paddingLeft: "5px",

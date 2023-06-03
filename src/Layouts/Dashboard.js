@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
-import { Outlet, NavLink } from "react-router-dom";
+import { Layout, Menu, theme } from "antd";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { MdDashboard } from "react-icons/md";
+import { TbFileInvoice } from "react-icons/tb";
 
 const { Header, Sider, Content } = Layout;
 const Dashboard = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -31,12 +31,12 @@ const Dashboard = () => {
           items={[
             {
               key: "dashboard",
-              //   icon: <UserOutlined />,
-              label: <NavLink to={"/home"}>Dashboard</NavLink>,
+              icon: <MdDashboard />,
+              label: <NavLink to={"/"}>Dashboard</NavLink>,
             },
             {
               key: "invoice",
-              //   icon: <VideoCameraOutlined />,
+              icon: <TbFileInvoice />,
               label: <NavLink to="/invoice">Invoice</NavLink>,
             },
           ]}
@@ -49,16 +49,9 @@ const Dashboard = () => {
             background: colorBgContainer,
           }}
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
+          <div className="dashboard_header">
+            <b>Dashboard</b>
+          </div>
         </Header>
         <Content
           style={{
@@ -68,7 +61,21 @@ const Dashboard = () => {
             background: colorBgContainer,
           }}
         >
-          <Outlet />
+          {location.pathname === "/" ? (
+            <div className="main_dashboard">
+              <h1 className="main_title">Welcome to Dashboard!!</h1>
+              <p>
+                In this dashboard, you will find all the essential details
+                related to your invoices. We have organized the information in a
+                user-friendly manner, allowing you to track and manage your
+                invoices effectively.
+              </p>
+            </div>
+          ) : location.pathname === "/invoice" ? (
+            <Outlet />
+          ) : (
+            ""
+          )}
         </Content>
       </Layout>
     </Layout>

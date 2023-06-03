@@ -37,31 +37,22 @@ const getInvoiceDetails = createSlice({
   initialState,
   reducers: {
     addInvoice: (state, action) => {
-      state.items = [...state.items, action.payload];
-      localStorage.setItem(
-        "invoiceItems",
-        JSON.stringify([...state.items, action.payload])
-      );
+      let currenInvoice = JSON.parse(localStorage.getItem("invoiceItems"));
+
+      state.items = [...currenInvoice, action.payload];
+      localStorage.setItem("invoiceItems", JSON.stringify([...state.items]));
     },
     updateInvoice: (state, action) => {
+      let currenInvoice = JSON.parse(localStorage.getItem("invoiceItems"));
       const { invoiceIndex } = action.payload;
       state.items[invoiceIndex] = action.payload;
-      localStorage.setItem("invoiceItems", JSON.stringify(state.items));
-    },
-    deleteInvoice: (state, action) => {
-      const { payload: invoiceIndex } = action;
-
-      if (invoiceIndex >= 0) {
-        const filterInvoice = state.items.filter(
-          (item, i) => i !== invoiceIndex
-        );
-        state.items = [...filterInvoice];
-        localStorage.setItem("invoiceItems", JSON.stringify(state.items));
-        message.success("Invoice Deleted Successfully");
-      }
+      currenInvoice[invoiceIndex] = action.payload; // when coming from search
+      localStorage.setItem("invoiceItems", JSON.stringify([...currenInvoice]));
     },
     searchInvoice: (state, action) => {
       const { payload: searchItem } = action;
+      let currenInvoice = JSON.parse(localStorage.getItem("invoiceItems"));
+
       state.status = true;
       if (searchItem !== "") {
         const filtered = state.items.filter((item) => {
@@ -69,14 +60,28 @@ const getInvoiceDetails = createSlice({
             .toLowerCase()
             .includes(searchItem.toLowerCase());
         });
-        if (filtered.length > 0) {
-          state.items = [...filtered];
-        }
+
+        state.items = [...filtered];
       } else if (searchItem === "" || !searchItem) {
         state.status = false;
-        state.items = [...initialState.items];
+        state.items = [...currenInvoice];
       }
       state.status = false;
+    },
+    deleteInvoice: (state, action) => {
+      let currenInvoice = JSON.parse(localStorage.getItem("invoiceItems"));
+
+      if (action?.payload?.uuid) {
+        const filterInvoice = currenInvoice.filter((item, i) => {
+          return item.uuid !== action.payload.uuid;
+        });
+        localStorage.setItem(
+          "invoiceItems",
+          JSON.stringify([...filterInvoice])
+        );
+        state.items = [...filterInvoice];
+        message.success("Invoice Deleted Successfully");
+      }
     },
   },
   extraReducers: (builder) => {
