@@ -3,7 +3,7 @@ import getInvoiceDetails from "./invoiceSlice";
 
 export const store = configureStore({
   reducer: {
-    geInvoices: getInvoiceDetails,
+    getInvoices: getInvoiceDetails,
   },
 });
 

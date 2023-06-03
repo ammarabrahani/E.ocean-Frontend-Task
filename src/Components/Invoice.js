@@ -23,7 +23,7 @@ const Invoice = () => {
 
   const [invoiceIndex, setinvoiceIndex] = useState(false);
 
-  const { geInvoices } = useSelector((state) => state);
+  const { getInvoices } = useSelector((state) => state);
 
   let dispatch = useDispatch();
   useEffect(() => {
@@ -46,7 +46,7 @@ const Invoice = () => {
   };
 
   const handleInvoiceEdit = (invoice) => {
-    const findIndex = geInvoices.items.findIndex(
+    const findIndex = getInvoices.items.findIndex(
       (item) => item.uuid === invoice.uuid
     );
 
@@ -56,7 +56,7 @@ const Invoice = () => {
   };
 
   const handleInvoiceDelete = (invoice) => {
-    const findIndex = geInvoices.items.find(
+    const findIndex = getInvoices.items.find(
       (item) => item.uuid === invoice.uuid
     );
     dispatch(deleteInvoice(findIndex));
@@ -271,7 +271,7 @@ const Invoice = () => {
       <Table
         className="invoice_table"
         columns={columns}
-        dataSource={geInvoices?.items}
+        dataSource={getInvoices?.items}
         onChange={onChange}
         loading={tableLoading}
         rowKey={(record) => record.uuid}
