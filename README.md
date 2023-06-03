@@ -8,7 +8,7 @@
 
 # Step: 3
 => You need to install yarn through command.
-npm install yarn
+npm install yarn or npm install --global yarn
 
 # Step 4
 => Run the command to install the packages.
