@@ -70,7 +70,6 @@ const Dashboard = () => {
                 user-friendly manner, allowing you to track and manage your
                 invoices effectively.
               </p>
-              <p>CRUD Operation.</p>
             </div>
           ) : location.pathname === "/invoice" ? (
             <Outlet />
