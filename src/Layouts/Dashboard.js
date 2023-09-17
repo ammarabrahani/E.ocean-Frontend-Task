@@ -64,7 +64,6 @@ const Dashboard = () => {
           {location.pathname === "/" ? (
             <div className="main_dashboard">
               <h1 className="main_title">Welcome to Dashboard!!</h1>
-<<<<<<< HEAD
               <p>
                 In this dashboard, you will find all the essential details
                 related to your invoices. We have organized the information in a
@@ -72,9 +71,7 @@ const Dashboard = () => {
                 invoices effectively.
               </p>
               <p>CRUD Operation.</p>
-=======
               <p>.</p>
->>>>>>> ca5109b (remove text)
             </div>
           ) : location.pathname === "/invoice" ? (
             <Outlet />
